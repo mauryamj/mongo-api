@@ -13,6 +13,10 @@ connectDB();
 const errorHandler = require('./middleware/errorMiddleware');
 
 // Routes
+app.get('/', (req, res) => {
+    res.send('API is running...');
+});
+
 app.use('/api/users', require('./routes/userRoutes'));
 
 app.use(errorHandler);
