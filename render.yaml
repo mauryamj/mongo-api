@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: mongo-api
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node src/app.js
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: MONGO_URI
+        sync: false
+    autoDeploy: false
