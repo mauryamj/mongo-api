@@ -3,8 +3,10 @@ const express = require('express');
 const connectDB = require('./config/db');
 
 const app = express(); //creates the server object
+const cors = require('cors');
 
 // Middleware
+app.use(cors()); // Enable CORS for all routes
 app.use(express.json());
 
 // Database connection
