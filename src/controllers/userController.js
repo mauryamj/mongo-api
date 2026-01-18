@@ -3,9 +3,17 @@ const asyncHandler = require('../utils/asyncHandler');
 
 // CREATE
 exports.createUser = asyncHandler(async (req, res) => {
-    const user = await User.create(req.body);
-    res.status(201).json(user);
+    const userData = { ...req.body };
 
+    // Handle File Upload (Convert to Data URI for storage)
+    if (req.file) {
+        const b64 = Buffer.from(req.file.buffer).toString('base64');
+        const dataURI = `data:${req.file.mimetype};base64,${b64}`;
+        userData.logo = dataURI;
+    }
+
+    const user = await User.create(userData);
+    res.status(201).json(user);
 });
 
 // READ ALL
