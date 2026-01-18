@@ -6,10 +6,14 @@ exports.createUser = asyncHandler(async (req, res) => {
     const userData = { ...req.body };
 
     // Handle File Upload (Convert to Data URI for storage)
+    // Handle File Upload (Convert to Data URI for storage)
     if (req.file) {
         const b64 = Buffer.from(req.file.buffer).toString('base64');
         const dataURI = `data:${req.file.mimetype};base64,${b64}`;
         userData.logo = dataURI;
+    } else if (req.body.logo) {
+        // If logo is provided in body (Base64 string from frontend), use it directly
+        userData.logo = req.body.logo;
     }
 
     const user = await User.create(userData);
@@ -31,9 +35,17 @@ exports.getUserById = asyncHandler(async (req, res) => {
 
 // UPDATE
 exports.updateUser = asyncHandler(async (req, res) => {
+    const userData = { ...req.body };
+
+    if (req.file) {
+        const b64 = Buffer.from(req.file.buffer).toString('base64');
+        const dataURI = `data:${req.file.mimetype};base64,${b64}`;
+        userData.logo = dataURI;
+    }
+
     const user = await User.findByIdAndUpdate(
         req.params.id,
-        req.body,
+        userData,
         { new: true }
     );
     res.json(user);
