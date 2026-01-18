@@ -20,6 +20,9 @@ const uploadMiddleware = (req, res, next) => {
             return res.status(500).json({ message: `Unknown upload error: ${err.message}` });
         }
         // Everything went fine.
+        console.log('Multer processed request.');
+        console.log('req.body:', req.body);
+        console.log('req.file:', req.file);
         next();
     });
 };
