@@ -6,14 +6,29 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 } // 5MB Limit
+    limits: { fileSize: 2 * 1024 * 1024 } // 2MB Limit (Safe for Vercel)
 });
+
+// Middleware to handle Multer errors
+const uploadMiddleware = (req, res, next) => {
+    upload.single('logo')(req, res, (err) => {
+        if (err instanceof multer.MulterError) {
+            // A Multer error occurred when uploading.
+            return res.status(400).json({ message: `File upload error: ${err.message}` });
+        } else if (err) {
+            // An unknown error occurred when uploading.
+            return res.status(500).json({ message: `Unknown upload error: ${err.message}` });
+        }
+        // Everything went fine.
+        next();
+    });
+};
 
 const controller = require('../controllers/userController');
 const validate = require('../middleware/validate');
 const { createUserRules } = require('../validators/userValidator');
 
-router.post('/', upload.single('logo'), createUserRules, validate, controller.createUser);
+router.post('/', uploadMiddleware, createUserRules, validate, controller.createUser);
 router.get('/', controller.getUsers);
 router.get('/:id', controller.getUserById);
 router.put('/:id', controller.updateUser);
